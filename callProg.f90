@@ -1,7 +1,14 @@
 program callProg
 use GraphMod
 implicit none
-  
+    
+  interface
+    subroutine writeMatFile(filename, Mat)
+      character (len=*), intent(in) :: filename
+      integer, dimension(:,:), intent(in) :: Mat
+    end subroutine  
+  end interface
+    
   type(Graph) :: G
   integer, dimension(:,:), allocatable :: AdjMat
   integer, dimension(:,:), allocatable :: IncMat
@@ -9,21 +16,12 @@ implicit none
   
   integer :: i, j
   
-  ! Reading the input file
-  open(unit =1, file='input.dat')
-  read(unit =1, FMT=*) G%v, G%e
-  
-  allocate(G%edgeList(G%e, 2))    
-  do i = 1,G%e
-    read(unit = 1,FMT=*) G%edgelist(i,1), G%edgelist(i,2)
-  end do
-  close(unit=1)
-  
+  call readGraphFile(G, 'input.dat')
   
   ! Allocating Memory to matrices
   allocate(AdjMat(G%v,G%v))
-  allocate(IncMat(G%v,G%e))  
-  allocate(AdjMat2(G%v,G%e))
+  allocate(IncMat(G%v,G%e))
+  allocate(AdjMat2(G%v,G%v))
   
   
   ! Calling subroutines
@@ -31,35 +29,34 @@ implicit none
   call IncidenceMatGraph (G, IncMat, dir = .false.)
   call AdjacencyIncidence(AdjMat2, IncMat)
   
-  
   ! Writing the output file
-  open(unit = 2, file = 'out_adj')
-  do i = 1, G%v
-    write(2, *), (AdjMat(i,j), j=1,G%v)
-  end do
-  close(unit = 2) 
-  
-  open(unit = 3, file = 'out_inc')  
-  do i = 1, G%v
-    write(3, *), (IncMat(i,j), j=1,G%e)
-  end do
-  close(unit =3)  
-
-  open(unit = 4, file = 'out_adj2')  
-  do i = 1, G%v
-    write(4, *), (AdjMat2(i,j), j=1,G%v)
-  end do
-  close(unit =4)
-  
+  call writeMatFile('out_adj', AdjMat)
+  call writeMatFile('out_inc', IncMat)
+  call writeMatFile('out_adj2', AdjMat2) 
   
   !Deallocating Memory
   deallocate(AdjMat2)
   deallocate(IncMat)    
-  deallocate(AdjMat)    
+  deallocate(AdjMat)
   deallocate(G%edgeList)
   
+    
 end program callProg
 
-subroutine readGraphFile(filename, G)
+subroutine writeMatFile(filename, Mat)
 
-end subroutine 
+    ! Writing the matrix in a file
+    character (len=*), intent(in) :: filename
+    integer, dimension(:,:), intent(in) :: Mat
+    integer :: i, j
+    integer, dimension(2) :: shapeMat
+    
+    shapeMat = shape(Mat)
+    
+    open(unit = 11, file = filename)
+    do i = 1, shapeMat(1)
+      write(11, *), (Mat(i,j), j=1,shapeMat(2))
+    end do
+    close(unit = 11) 
+
+end subroutine writeMatFile

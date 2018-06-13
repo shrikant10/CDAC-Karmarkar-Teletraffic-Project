@@ -71,4 +71,23 @@ implicit none
   end subroutine AdjacencyIncidence
 
 
+  
+  subroutine readGraphFile(G, filename)
+  
+    ! Reading the input file
+    type(Graph), intent(out) :: G 
+    character (len=*), intent(in) :: filename
+    integer :: i
+    
+    open(unit =10, file= filename, status='old')
+    read(unit =10, FMT=*) G%v, G%e
+    
+    allocate(G%edgeList(G%e, 2))    
+    do i = 1,G%e
+      read(unit = 10,FMT=*) G%edgelist(i,1), G%edgelist(i,2)
+    end do
+    close(unit=10)
+  
+  end subroutine readGraphFile
+
 end module GraphMod
