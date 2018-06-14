@@ -19,9 +19,9 @@ implicit none
   call readGraphFile(G, 'input.dat')
   
   ! Allocating Memory to matrices
-  allocate(AdjMat(G%v,G%v))
-  allocate(IncMat(G%v,G%e))
-  allocate(AdjMat2(G%v,G%v))
+  allocate(AdjMat(G.v,G.v))
+  allocate(IncMat(G.v,G.e))
+  allocate(AdjMat2(G.v,G.v))
   
   
   ! Calling subroutines
@@ -38,7 +38,7 @@ implicit none
   deallocate(AdjMat2)
   deallocate(IncMat)    
   deallocate(AdjMat)
-  deallocate(G%edgeList)
+  deallocate(G.edgeList)
   
     
 end program callProg

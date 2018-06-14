@@ -6,7 +6,7 @@ implicit none
     integer :: e                                      ! Num of edges
     integer, dimension(:,:), allocatable :: edgeList  ! List of edges
     !character (len = 2) :: graphType                 ! Directed / Undirected
-    !logical :: dir = false
+    !logical :: isdirected = false
   end type Graph
   
   contains
@@ -21,14 +21,14 @@ implicit none
     AdjMat(:,:) = 0
     
     if(dir == .true.) then
-      do i = 1,G%e
-        AdjMat(G%edgelist(i,1),G%edgelist(i,2)) = 1
-        AdjMat(G%edgelist(i,2),G%edgelist(i,1)) = -1
+      do i = 1,G.e
+        AdjMat(G.edgelist(i,1),G.edgelist(i,2)) = 1
+        AdjMat(G.edgelist(i,2),G.edgelist(i,1)) = -1
       end do
     else
-      do i = 1,G%e
-        AdjMat(G%edgelist(i,1),G%edgelist(i,2)) = 1
-        AdjMat(G%edgelist(i,2),G%edgelist(i,1)) = 1
+      do i = 1,G.e
+        AdjMat(G.edgelist(i,1),G.edgelist(i,2)) = 1
+        AdjMat(G.edgelist(i,2),G.edgelist(i,1)) = 1
       end do
     end if
     
@@ -47,14 +47,14 @@ implicit none
     IncMat(:,:) = 0
     
     if(dir == .true.) then
-      do i = 1,G%e
-        IncMat(G%edgelist(i,1),i) = -1
-        IncMat(G%edgelist(i,2),i) = 1
+      do i = 1,G.e
+        IncMat(G.edgelist(i,1),i) = -1
+        IncMat(G.edgelist(i,2),i) = 1
       end do
     else
-      do i = 1,G%e
-        IncMat(G%edgelist(i,1),i) = 1
-        IncMat(G%edgelist(i,2),i) = 1
+      do i = 1,G.e
+        IncMat(G.edgelist(i,1),i) = 1
+        IncMat(G.edgelist(i,2),i) = 1
       end do
     end if
     
@@ -80,11 +80,11 @@ implicit none
     integer :: i
     
     open(unit =10, file= filename, status='old')
-    read(unit =10, FMT=*) G%v, G%e
+    read(unit =10, FMT=*) G.v, G.e
     
-    allocate(G%edgeList(G%e, 2))    
-    do i = 1,G%e
-      read(unit = 10,FMT=*) G%edgelist(i,1), G%edgelist(i,2)
+    allocate(G.edgeList(G.e, 2))    
+    do i = 1,G.e
+      read(unit = 10,FMT=*) G.edgelist(i,1), G.edgelist(i,2)
     end do
     close(unit=10)
   
