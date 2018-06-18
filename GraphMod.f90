@@ -2,25 +2,23 @@ module GraphMod
 implicit none
   
   type Graph
-    integer :: v                                      ! Num of Vertices
-    integer :: e                                      ! Num of edges
-    integer, dimension(:,:), allocatable :: edgeList  ! List of edges
-    !character (len = 2) :: graphType                 ! Directed / Undirected
-    !logical :: isdirected = false
+    integer :: v                                     ! Num of Vertices
+    integer :: e                                     ! Num of edges
+    integer, dimension(:,:), allocatable :: edgeList ! List of edges
+    logical :: isdirected = .false.                  ! Edges directed/undirected 
   end type Graph
   
   contains
   
-  subroutine AdjacencyMatGraph (G, AdjMat, dir)
+  subroutine AdjacencyMatGraph (G, AdjMat)  
     
     type(Graph), intent(in) :: G
     integer, dimension(:,:), intent(out) :: AdjMat
-    logical, intent(in):: dir
     integer :: i, j
     
     AdjMat(:,:) = 0
     
-    if(dir == .true.) then
+    if(G.isdirected == .true.) then
       do i = 1,G.e
         AdjMat(G.edgelist(i,1),G.edgelist(i,2)) = 1
         AdjMat(G.edgelist(i,2),G.edgelist(i,1)) = -1
@@ -37,16 +35,15 @@ implicit none
   
   
   
-  subroutine IncidenceMatGraph (G, IncMat, dir)
+  subroutine IncidenceMatGraph (G, IncMat)
     
     type(Graph), intent(in) :: G
     integer, dimension(:,:), intent(out) :: IncMat
-    logical, intent(in):: dir
     integer :: i, j
     
     IncMat(:,:) = 0
     
-    if(dir == .true.) then
+    if(G.isdirected == .true.) then
       do i = 1,G.e
         IncMat(G.edgelist(i,1),i) = -1
         IncMat(G.edgelist(i,2),i) = 1
@@ -61,8 +58,11 @@ implicit none
   end subroutine IncidenceMatGraph
   
     
-  
+  ! Derive adjacency matrix from inedence matrix  A=I*Transpose(I)
+  ! Output Adjacency matrix contains degree of vertices in digonal elements
+
   subroutine AdjacencyIncidence(AdjMat, IncMat)
+    
     integer, dimension(:,:), intent(in) :: IncMat
     integer, dimension(:,:), intent(out) :: AdjMat
     
@@ -71,17 +71,21 @@ implicit none
   end subroutine AdjacencyIncidence
 
 
+  ! Reading the input Graph file
   
   subroutine readGraphFile(G, filename)
   
-    ! Reading the input file
     type(Graph), intent(out) :: G 
     character (len=*), intent(in) :: filename
-    integer :: i
+    integer :: i, dir
     
     open(unit =10, file= filename, status='old')
-    read(unit =10, FMT=*) G.v, G.e
+    read(unit =10, FMT=*) G.v, G.e, dir
     
+    if(dir == 1) then
+        G.isdirected = .true.
+    end if
+        
     allocate(G.edgeList(G.e, 2))    
     do i = 1,G.e
       read(unit = 10,FMT=*) G.edgelist(i,1), G.edgelist(i,2)

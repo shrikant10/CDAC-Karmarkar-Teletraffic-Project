@@ -25,8 +25,8 @@ implicit none
   
   
   ! Calling subroutines
-  call AdjacencyMatGraph (G, AdjMat, dir = .false.)
-  call IncidenceMatGraph (G, IncMat, dir = .false.)
+  call AdjacencyMatGraph (G, AdjMat)
+  call IncidenceMatGraph (G, IncMat)
   call AdjacencyIncidence(AdjMat2, IncMat)
   
   ! Writing the output file
